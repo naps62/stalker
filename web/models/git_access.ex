@@ -10,8 +10,6 @@ defmodule Stalker.GitAccess do
     timestamps
   end
 
-  # before_insert :set_entered_at
-
   @required_fields ~w(pid git_repo_id entered_at)
   @optional_fields ~w(exited_at)
 
@@ -25,10 +23,4 @@ defmodule Stalker.GitAccess do
     model
     |> cast(params, @required_fields, @optional_fields)
   end
-
-  # def set_entered_at(changeset) do
-  #   case fetch_field(changeset, :timestamp) do
-  #     {:changes, nil}
-  #   end
-  # end
 end

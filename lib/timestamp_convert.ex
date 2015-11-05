@@ -8,7 +8,7 @@ defmodule Stalker.TimestampConvert do
     |> :calendar.gregorian_seconds_to_datetime
   end
 
-  def to_timestap(datetime) do
+  def to_timestamp(datetime) do
     datetime
     |> :calendar.datetime_to_gregorian_seconds
     |> -(@epoch)

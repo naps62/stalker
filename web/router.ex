@@ -17,6 +17,8 @@ defmodule Stalker.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
+
+    get "/stats/git", StatsController, :git
   end
 
   # Other scopes may use custom stacks.

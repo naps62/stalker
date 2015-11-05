@@ -1,0 +1,18 @@
+<table>
+  <thead>
+    <tr>
+      <th>Repo</th>
+      <th>Entered</th>
+      <th>Exited</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= for access <- @accesses do %>
+      <tr>
+        <td><%= access.git_repo.name %></td>
+        <td><%= access.entered_at %></td>
+        <td><%= access.exited_at %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

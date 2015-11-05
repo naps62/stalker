@@ -3,7 +3,7 @@ defmodule Stalker.GitAccessTest do
 
   alias Stalker.GitAccess
 
-  @valid_attrs %{entered_at: "2010-04-17 14:00:00", exited_at: "2010-04-17 14:00:00", pid: "some content"}
+  @valid_attrs %{git_repo_id: 1, entered_at: "2010-04-17 14:00:00", exited_at: "2010-04-17 14:00:00", pid: "some content"}
   @invalid_attrs %{}
 
   test "changeset with valid attributes" do

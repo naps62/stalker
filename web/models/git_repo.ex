@@ -1,10 +1,14 @@
 defmodule Stalker.GitRepo do
   use Stalker.Web, :model
+
+  alias Stalker.Repo
+  alias Stalker.GitRepo
+
   schema "git_repos" do
     field :path, :string
     field :name, :string
 
-    has_many :git_repo_accesses, GitAccess
+    has_many :git_accesses, GitAccess
 
     timestamps
   end
@@ -33,5 +37,14 @@ defmodule Stalker.GitRepo do
       |> List.last
 
     changeset |> change(%{name: name})
+  end
+
+  def get_or_insert_by(params) do
+    case Repo.get_by(GitRepo, path: params["path"]) do
+      nil ->
+        changeset = changeset(%GitRepo{}, params)
+        Repo.insert!(changeset)
+      repo -> repo
+    end
   end
 end

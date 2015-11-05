@@ -5,34 +5,41 @@ defmodule Stalker.API.GitEventsController do
   alias Stalker.GitAccess
 
   def enter(conn, params) do
-    repo = git_repo(params)
+    repo = GitRepo.get_or_insert_by(params)
 
+    changeset = GitAccess.changeset(%GitAccess{}, git_access_enter_params(repo, params))
 
-    access_params = %{
-      git_repo_id: repo.id,
-      pid: Map.get(params, "pid"),
-      entered_at: Map.get(params, "timestamp") |> date_from_timestamp
-    }
-
-    changeset = GitAccess.changeset(%GitAccess{}, access_params)
-    Repo.insert!(changeset)
-
-    conn
-    |> send_resp(200, "")
-  end
-
-  def exit(conn, _params) do
-    conn
-    |> send_resp(200, "")
-  end
-
-  defp git_repo(params) do
-    case Repo.get_by(GitRepo, path: Map.get(params, "path")) do
-      nil ->
-        changeset = GitRepo.changeset(%GitRepo{}, params)
-        Repo.insert!(changeset)
-        repo -> repo
+    case Repo.insert(changeset) do
+      {:ok, _}    -> send_resp(conn, 200, "")
+      {:error, _} -> send_resp(conn, 422, "")
     end
+  end
+
+  def exit(conn, %{"path" => path, "pid" => pid} = params) do
+    case Repo.get_by(GitRepo, path: path) do
+      nil -> send_resp(conn, 422, "")
+      repo ->
+        access = Repo.update_all(
+          from(access in GitAccess,
+            where: access.pid == ^pid,
+            where: access.git_repo_id == ^repo.id,
+            where: is_nil(access.exited_at)),
+          set: [exited_at: git_access_exit_params(params).exited_at]
+        )
+        send_resp(conn, 200, "")
+    end
+  end
+
+  defp git_access_enter_params(git_repo, %{"pid" => pid, "timestamp" => timestamp}) do
+    %{
+      git_repo_id: git_repo.id,
+      pid: pid,
+      entered_at: date_from_timestamp(timestamp)
+    }
+  end
+
+  defp git_access_exit_params(%{"timestamp" => timestamp}) do
+    %{exited_at: date_from_timestamp(timestamp)}
   end
 
   defp date_from_timestamp(timestamp) do

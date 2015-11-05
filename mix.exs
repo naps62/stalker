@@ -18,9 +18,13 @@ defmodule Stalker.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {Stalker, []},
-     applications: [:phoenix, :phoenix_html, :cowboy, :logger,
-                    :phoenix_ecto, :postgrex]]
+     applications: app_list(Mix.env)]
   end
+
+  defp app_list(:test), do: [:ex_machina | app_list]
+  defp app_list(_), do: app_list
+  defp app_list, do: [:phoenix, :phoenix_html, :cowboy, :logger,
+                      :phoenix_ecto, :postgrex]
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "web", "test/support"]
@@ -35,7 +39,8 @@ defmodule Stalker.Mixfile do
      {:postgrex, ">= 0.0.0"},
      {:phoenix_html, "~> 2.1"},
      {:phoenix_live_reload, "~> 1.0", only: :dev},
-     {:cowboy, "~> 1.0"}]
+     {:cowboy, "~> 1.0"},
+     {:ex_machina, "~> 0.4"}]
   end
 
   # Aliases are shortcut or tasks specific to the current project.
