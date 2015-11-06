@@ -23,4 +23,17 @@ defmodule Stalker.GitAccess do
     model
     |> cast(params, @required_fields, @optional_fields)
   end
+
+  def duration(model) do
+    use Timex
+
+    entered = Ecto.DateTime.to_erl(model.entered_at)
+    exited = case model.exited_at do
+      nil -> :calendar.local_time()
+      datetime -> Ecto.DateTime.to_erl(datetime)
+    end
+
+    Date.diff(Date.from(entered), Date.from(exited), :timestamp)
+    |> Ecto.Date.from_erl
+  end
 end

@@ -1,4 +1,4 @@
-defmodule Stalker.StatsView do
+defmodule Stalker.API.StatsView do
   use Stalker.Web, :view
 
   alias Stalker.GitAccess

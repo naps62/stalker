@@ -42,10 +42,9 @@ defmodule Stalker.API.GitEventsController do
     %{exited_at: date_from_timestamp(timestamp)}
   end
 
+  defp date_from_timestamp(nil), do: nil
   defp date_from_timestamp(timestamp) do
-    case (Stalker.TimestampConvert.from_timestamp(timestamp) |> Ecto.DateTime.cast) do
-      {:ok, date} -> date
-      _ -> nil
-    end
-  end
+    timestamp
+    |> Stalker.TimestampConvert.from_timestamp
+    |> Ecto.DateTime.cast
 end
